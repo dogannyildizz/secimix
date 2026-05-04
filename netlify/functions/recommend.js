@@ -48,9 +48,15 @@ Bu bilgilere göre fiyat performans açısından en mantıklı 3 ürün öner.
 
 Kurallar:
 - Türkiye pazarı odaklı düşün.
-- Güncel fiyatı kesin bilmiyorsan yaklaşık olduğunu belirt.
-- Gerçek satın alma linki bilmiyorsan link alanına "#" koy.
-- Kullanıcıyı yanıltacak kesin fiyat veya stok iddiası yazma.
+- Mümkün olduğunca gerçek ve bilinen ürün modelleri öner.
+- Uydurma mağaza linki verme; gerçek linkten emin değilsen link alanına "#" koy.
+- Güncel fiyatı kesin bilmiyorsan fiyatı "yaklaşık" olarak yaz.
+- Kullanıcıyı yanıltacak kesin fiyat, kesin stok veya kesin kampanya iddiası yazma.
+- Bütçeyi aşan ürünü sadece 3. alternatifte ve makul gerekçeyle öner.
+- İlk ürün dengeli fiyat performans tercihi olsun.
+- İkinci ürün daha uygun fiyatlı alternatif olsun.
+- Üçüncü ürün bütçe biraz esnerse düşünülebilecek alternatif olsun.
+- Artı ve eksi yönleri kısa, net ve abartısız yaz.
 - Yanıtı sadece geçerli JSON olarak ver.
 - Markdown, açıklama veya JSON dışı metin yazma.
 - Tam olarak 3 ürün döndür.
