@@ -123,10 +123,12 @@ form.addEventListener("submit", async function(event) {
     statusMessage.classList.add("hidden");
     results.classList.remove("hidden");
   } catch (error) {
-    statusMessage.textContent = "Hata: " + error.message;
-    statusMessage.classList.remove("hidden");
-    statusMessage.classList.add("error");
-    results.classList.add("hidden");
-    console.error("Backend hatası:", error);
-  }
+  statusMessage.textContent =
+    "Şu anda öneriler hazırlanamadı. Lütfen birkaç dakika sonra tekrar deneyin.";
+  statusMessage.classList.remove("hidden");
+  statusMessage.classList.add("error");
+  results.classList.add("hidden");
+
+  console.error("Backend hatası:", error);
+}
 });
