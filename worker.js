@@ -44,12 +44,9 @@ async function handleRecommend(request, env) {
 
     const body = await request.json();
 
-    const budget = Number(body.budget);
-    const currency = body.currency || "TL";
+    const currency = "TL";
     const category = body.category || "Ürün";
-    const productType = (body.productType || "").trim();
     const purpose = body.purpose || "Genel kullanım";
-    const expectation = (body.expectation || "").trim();
 
     if (!budget || budget <= 0) {
       return jsonResponse(
@@ -59,13 +56,11 @@ async function handleRecommend(request, env) {
     }
 
     const candidates = await searchProductCandidates(serperApiKey, {
-      budget,
-      currency,
-      category,
-      productType,
-      purpose,
-      expectation
-    });
+  budget,
+  currency,
+  category,
+  purpose
+});
 
     if (!candidates.length) {
       return jsonResponse(
@@ -364,16 +359,11 @@ function buildProductSearchQuery({
   budget,
   currency,
   category,
-  productType,
-  purpose,
-  expectation
+  purpose
 }) {
-  const targetProduct = productType || category;
-
   return [
-    targetProduct,
+    category,
     purpose,
-    expectation,
     `${budget} ${currency}`,
     "fiyat",
     "satın al",
