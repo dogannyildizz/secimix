@@ -8,14 +8,14 @@ exports.handler = async function(event) {
   }
 
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "OPENAI_API_KEY tanımlı değil. Netlify Environment Variables alanını kontrol et."
+          error: "OPENROUTER_API_KEY tanımlı değil. Netlify Environment Variables alanını kontrol et."
         })
       };
     }
@@ -53,6 +53,7 @@ Bu bilgilere göre fiyat performans açısından en mantıklı 3 ürün öner.
 - Kullanıcıyı yanıltacak kesin fiyat veya stok iddiası yazma.
 - Yanıtı sadece geçerli JSON olarak ver.
 - JSON dışında açıklama, markdown veya ek metin yazma.
+- Tam olarak 3 ürün döndür.
 
 JSON formatı tam olarak şöyle olsun:
 {
@@ -76,15 +77,17 @@ JSON formatı tam olarak şöyle olsun:
 }
 `;
 
-    const openaiResponse = await fetch("https://api.openai.com/v1/responses", {
+    const routerResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://secimix.netlify.app",
+        "X-Title": "Secimix"
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-        input: [
+        model: "openrouter/free",
+        messages: [
           {
             role: "system",
             content:
@@ -95,40 +98,69 @@ JSON formatı tam olarak şöyle olsun:
             content: userPrompt
           }
         ],
-        temperature: 0.4
+        temperature: 0.3
       })
     });
 
-    const openaiData = await openaiResponse.json();
+    const routerData = await routerResponse.json();
 
-    if (!openaiResponse.ok) {
+    if (!routerResponse.ok) {
       return {
-        statusCode: openaiResponse.status,
+        statusCode: routerResponse.status,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: openaiData.error?.message || "OpenAI API isteği başarısız oldu."
+          error:
+            routerData.error?.message ||
+            routerData.message ||
+            "OpenRouter API isteği başarısız oldu."
         })
       };
     }
 
     const outputText =
-      openaiData.output_text ||
-      openaiData.output?.[0]?.content?.[0]?.text ||
+      routerData.choices?.[0]?.message?.content ||
       "";
+
+    if (!outputText) {
+      return {
+        statusCode: 500,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "OpenRouter boş yanıt döndürdü."
+        })
+      };
+    }
 
     let parsed;
 
     try {
       parsed = JSON.parse(outputText);
-    } catch (parseError) {
-      return {
-        statusCode: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "OpenAI yanıtı JSON olarak okunamadı.",
-          raw: outputText
-        })
-      };
+    } catch (firstParseError) {
+      const jsonMatch = outputText.match(/\{[\s\S]*\}/);
+
+      if (!jsonMatch) {
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            error: "OpenRouter yanıtı JSON olarak okunamadı.",
+            raw: outputText
+          })
+        };
+      }
+
+      try {
+        parsed = JSON.parse(jsonMatch[0]);
+      } catch (secondParseError) {
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            error: "OpenRouter yanıtından JSON ayıklanamadı.",
+            raw: outputText
+          })
+        };
+      }
     }
 
     if (!parsed.products || !Array.isArray(parsed.products)) {
@@ -136,7 +168,7 @@ JSON formatı tam olarak şöyle olsun:
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "OpenAI yanıtında products listesi bulunamadı."
+          error: "Yanıtta products listesi bulunamadı."
         })
       };
     }
