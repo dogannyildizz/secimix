@@ -5,33 +5,6 @@ const statusMessage = document.getElementById("statusMessage");
 const searchSummary = document.getElementById("searchSummary");
 const searchSummaryText = document.getElementById("searchSummaryText");
 
-const categorySelect = document.getElementById("category");
-const expectationInput = document.getElementById("expectation");
-
-const expectationExamples = {
-  Laptop: "Örn: oyun için güçlü olsun, hafif olsun, şarjı uzun gitsin",
-  Telefon: "Örn: kamerası iyi olsun, şarjı uzun gitsin",
-  Kulaklık: "Örn: mikrofonu iyi olsun, gürültü engelleme olsun",
-  Monitör: "Örn: 144Hz olsun, renkleri iyi olsun",
-  Tablet: "Örn: kalem desteği olsun, ders için uygun olsun",
-  Televizyon: "Örn: görüntü kalitesi iyi olsun, büyük ekran olsun",
-  "Akıllı Saat": "Örn: pil ömrü uzun olsun, spor takibi iyi olsun",
-  "Oyun Konsolu": "Örn: oyun çeşitliliği iyi olsun, uzun ömürlü olsun",
-  Klavye: "Örn: sessiz olsun, mekanik olsun",
-  Mouse: "Örn: kablosuz olsun, oyun için uygun olsun"
-};
-
-function updateExpectationPlaceholder() {
-  const selectedCategory = categorySelect.value;
-
-  expectationInput.placeholder =
-    expectationExamples[selectedCategory] ||
-    "Örn: fiyat performans açısından mantıklı olsun";
-}
-
-categorySelect.addEventListener("change", updateExpectationPlaceholder);
-updateExpectationPlaceholder();
-
 function renderProducts(products) {
   results.innerHTML = "";
 
@@ -56,7 +29,7 @@ function renderProducts(products) {
         <div><strong>Eksi:</strong> ${product.cons}</div>
       </div>
       <p class="source-note">${product.sourceNote}</p>
-      <a class="btn btn-secondary" href="${product.link}">Ürüne Git</a>
+      <a class="btn btn-secondary" href="${product.link}" target="_blank" rel="noopener noreferrer">Ürüne Git</a>
     `;
 
     results.appendChild(card);
@@ -67,11 +40,8 @@ form.addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const budget = document.getElementById("budget").value;
-  const currency = document.getElementById("currency").value;
   const category = document.getElementById("category").value;
-  const productType = document.getElementById("productType").value.trim();
   const purpose = document.getElementById("purpose").value;
-  const expectation = document.getElementById("expectation").value.trim();
 
   if (!budget || Number(budget) <= 0) {
     statusMessage.textContent = "Lütfen geçerli bir bütçe gir.";
@@ -82,12 +52,9 @@ form.addEventListener("submit", async function(event) {
     return;
   }
 
-  const selectedProductName = productType || category;
-
   searchSummaryText.textContent =
-    `${budget} ${currency} bütçeyle, ${purpose.toLowerCase()} amacı için ` +
-    `${selectedProductName.toLowerCase()} önerileri hazırlanıyor` +
-    `${expectation ? ". Ek beklenti: " + expectation : ""}.`;
+    `${budget} TL bütçeyle, ${purpose.toLowerCase()} amacı için ` +
+    `${category.toLowerCase()} önerileri hazırlanıyor.`;
 
   searchSummary.classList.remove("hidden");
 
@@ -107,11 +74,8 @@ form.addEventListener("submit", async function(event) {
       },
       body: JSON.stringify({
         budget,
-        currency,
         category,
-        productType,
-        purpose,
-        expectation
+        purpose
       })
     });
 
@@ -125,21 +89,16 @@ form.addEventListener("submit", async function(event) {
 
     statusMessage.classList.add("hidden");
     results.classList.remove("hidden");
-    statusMessage.classList.add("hidden");
-    results.classList.remove("hidden");
-    
-    submitButton.disabled = false;
-    submitButton.textContent = "Önerileri Göster";
   } catch (error) {
-  statusMessage.textContent =
-    "Şu anda öneriler hazırlanamadı. Lütfen birkaç dakika sonra tekrar deneyin.";
-  statusMessage.classList.remove("hidden");
-  statusMessage.classList.add("error");
-  results.classList.add("hidden");
+    statusMessage.textContent =
+      "Şu anda öneriler hazırlanamadı. Lütfen birkaç dakika sonra tekrar deneyin.";
+    statusMessage.classList.remove("hidden");
+    statusMessage.classList.add("error");
+    results.classList.add("hidden");
+
+    console.error("Backend hatası:", error);
+  }
 
   submitButton.disabled = false;
   submitButton.textContent = "Önerileri Göster";
-
-  console.error("Backend hatası:", error);
-}
 });
