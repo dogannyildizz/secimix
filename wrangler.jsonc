@@ -1,12 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "secimix",
+  "main": "worker.js",
   "compatibility_date": "2026-05-04",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/recommend"]
   },
   "compatibility_flags": [
     "nodejs_compat"
