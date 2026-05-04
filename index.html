@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akıllı Ürün Bulucu | Fiyat Performans Önerileri</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo">Akıllı Sepet</div>
+      <ul class="nav-links">
+        <li><a href="#nasil-calisir">Nasıl Çalışır?</a></li>
+        <li><a href="#urun-bul">Ürün Bul</a></li>
+        <li><a href="#guven">Güven</a></li>
+        <li><a href="#puanlama">Puanlama</a></li>
+        <li><a href="#sss">SSS</a></li>
+        <li><a href="#iletisim">İletişim</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="badge">Bütçene göre akıllı ürün önerileri</span>
+          <h1>Bütçene göre en mantıklı ürünü dakikalar içinde bul.</h1>
+          <p>
+            Ne kadar harcamak istediğini ve hangi ürünü aradığını yaz. Akıllı Sepet,
+            bütçene göre fiyat performans açısından en mantıklı seçenekleri gerekçeleriyle listeler.
+          </p>
+          <div class="button-row">
+            <a href="#urun-bul" class="btn btn-primary">Ürün Aramaya Başla</a>
+            <a href="#nasil-calisir" class="btn btn-secondary">Nasıl Çalıştığını Gör</a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>Örnek öneri çıktısı</h3>
+          <div class="mini-result">
+            <strong>1. En dengeli tercih</strong>
+            <span>Fiyatı makul, temel özellikleri güçlü, uzun vadede mantıklı.</span>
+          </div>
+          <div class="mini-result">
+            <strong>2. En uygun fiyatlı tercih</strong>
+            <span>Bütçeyi zorlamadan iyi performans sunar.</span>
+          </div>
+          <div class="mini-result">
+            <strong>3. Biraz daha iyi seçenek</strong>
+            <span>Bütçe esnerse daha uzun ömürlü alternatif.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="nasil-calisir">
+      <div class="container">
+        <div class="section-title">
+          <h2>Nasıl çalışır?</h2>
+          <p>Kullanıcı için sade, arka planda ise karşılaştırmalı ve gerekçeli bir öneri sistemi.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Bütçeni gir</h3>
+            <p>Ne kadar harcamak istediğini yazarsın. Sistem bu sınırı dikkate alır.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Kategorini seç</h3>
+            <p>Telefon, laptop, kulaklık, monitör gibi ürün kategorilerinden birini seçersin.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Gerekçeli liste al</h3>
+            <p>Ürünler sadece listelenmez; neden önerildiği de kısa ve anlaşılır şekilde açıklanır.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="urun-bul">
+      <div class="container">
+        <div class="section-title">
+          <h2>Ürün bulucu</h2>
+          <p>Bu ilk prototipte örnek sonuçlar gösteriyoruz. Sonraki aşamada gerçek veri ve yapay zekâ bağlantısı eklenecek.</p>
+        </div>
+
+        <div class="finder">
+          <form id="productForm">
+            <div>
+              <label for="budget">Bütçe</label>
+              <input id="budget" type="number" placeholder="Örn: 25000" required />
+            </div>
+
+            <div>
+              <label for="currency">Para birimi</label>
+              <select id="currency">
+                <option value="TL">TL</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="category">Kategori</label>
+              <select id="category">
+                <option value="Laptop">Laptop</option>
+                <option value="Telefon">Telefon</option>
+                <option value="Kulaklık">Kulaklık</option>
+                <option value="Monitör">Monitör</option>
+                <option value="Tablet">Tablet</option>
+                <option value="Televizyon">Televizyon</option>
+                <option value="Akıllı Saat">Akıllı Saat</option>
+                <option value="Oyun Konsolu">Oyun Konsolu</option>
+                <option value="Klavye">Klavye</option>
+                <option value="Mouse">Mouse</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="productType">Aradığın ürün</label>
+              <input id="productType" type="text" placeholder="Örn: oyuncu laptopu" />
+            </div>
+
+            <div>
+              <label for="purpose">Kullanım amacı</label>
+              <select id="purpose">
+                <option value="Günlük kullanım">Günlük kullanım</option>
+                <option value="Oyun">Oyun</option>
+                <option value="İş">İş</option>
+                <option value="Öğrenci">Öğrenci</option>
+                <option value="Profesyonel kullanım">Profesyonel kullanım</option>
+                <option value="Taşınabilirlik">Taşınabilirlik</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="expectation">Ek beklenti</label>
+              <input id="expectation" type="text" placeholder="Örn: hafif olsun" />
+            </div>
+
+            <button class="btn btn-primary" type="submit">Önerileri Göster</button>
+          </form>
+
+          <div class="form-tip">
+            İpucu: Daha iyi sonuç için “şarjı uzun gitsin”, “oyun için güçlü olsun”,
+            “hafif olsun” veya “kamerası iyi olsun” gibi kısa bir beklenti yazabilirsin.
+          </div>
+
+          <div id="statusMessage" class="status-message hidden"></div>
+
+          <div id="searchSummary" class="search-summary hidden">
+            <h3>Arama özeti</h3>
+            <p id="searchSummaryText"></p>
+          </div>
+
+          <div id="results" class="results hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guven">
+      <div class="container">
+        <div class="section-title">
+          <h2>Güven ve şeffaflık</h2>
+          <p>Profesyonel bir ürün öneri sitesinde kullanıcı güveni çok önemlidir.</p>
+        </div>
+
+        <div class="trust-grid">
+          <div class="trust-card">
+            <h3>Gerekçeli öneri</h3>
+            <p>Her ürünün neden önerildiği açıkça yazılır. Sadece link paylaşılmaz.</p>
+          </div>
+          <div class="trust-card">
+            <h3>Bütçe odaklı liste</h3>
+            <p>Kullanıcının verdiği bütçeye göre uygun, dengeli ve üst seviye alternatifler ayrılır.</p>
+          </div>
+          <div class="trust-card">
+            <h3>Bağlantı açıklığı</h3>
+            <p>İleride gelir ortaklığı linkleri kullanılacaksa kullanıcıya açıkça belirtilebilir.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="puanlama">
+      <div class="container">
+        <div class="section-title">
+          <h2>Puanlama mantığı</h2>
+          <p>Ürünleri sadece ucuz oldukları için değil, bütçe ve ihtiyaç dengesine göre değerlendirmek gerekir.</p>
+        </div>
+
+        <div class="method-grid">
+          <div class="method-card">
+            <span class="method-percent">%35</span>
+            <h3>Fiyat</h3>
+            <p>Ürünün kullanıcının bütçesine ne kadar uygun olduğu değerlendirilir.</p>
+          </div>
+          <div class="method-card">
+            <span class="method-percent">%30</span>
+            <h3>Performans</h3>
+            <p>Ürünün teknik özellikleri ve sunduğu genel güç dikkate alınır.</p>
+          </div>
+          <div class="method-card">
+            <span class="method-percent">%20</span>
+            <h3>İhtiyaca uyum</h3>
+            <p>Ürünün seçilen kullanım amacına ne kadar uygun olduğu ölçülür.</p>
+          </div>
+          <div class="method-card">
+            <span class="method-percent">%10</span>
+            <h3>Güven</h3>
+            <p>Marka, servis, garanti ve genel kullanıcı güveni değerlendirilir.</p>
+          </div>
+          <div class="method-card">
+            <span class="method-percent">%5</span>
+            <h3>Fiyat riski</h3>
+            <p>Stok, kampanya ve fiyat oynaklığı gibi değişkenler hesaba katılır.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sss">
+      <div class="container">
+        <div class="section-title">
+          <h2>Sık sorulan sorular</h2>
+          <p>Kullanıcıların aklına gelebilecek temel sorular.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-card">
+            <h3>Öneriler nasıl belirleniyor?</h3>
+            <p>Fiyat, özellikler, kullanım amacı ve genel değer dengesi birlikte değerlendirilerek öneri sıralaması yapılır.</p>
+          </div>
+          <div class="faq-card">
+            <h3>En ucuz ürünü mü öneriyorsunuz?</h3>
+            <p>Hayır. Amaç en ucuzu değil, verilen bütçeye göre en mantıklı fiyat performans ürünlerini bulmaktır.</p>
+          </div>
+          <div class="faq-card">
+            <h3>Satın alma linkleri olacak mı?</h3>
+            <p>Evet. Profesyonel sürümde her önerinin yanında ürüne giden bağlantı yer alabilir.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="iletisim">
+      <div class="container contact-box">
+        <div>
+          <h2>İletişim</h2>
+          <p>Öneri, iş birliği veya destek talepleri için bu alan kullanılabilir.</p>
+        </div>
+
+        <form id="contactForm">
+          <div>
+            <label for="name">Adınız</label>
+            <input id="name" type="text" placeholder="Adınızı yazın" />
+          </div>
+          <div>
+            <label for="email">E-posta</label>
+            <input id="email" type="email" placeholder="E-posta adresiniz" />
+          </div>
+          <div>
+            <label for="message">Mesaj</label>
+            <textarea id="message" rows="5" placeholder="Mesajınızı yazın"></textarea>
+          </div>
+          <button class="btn btn-primary" type="button">Mesaj Gönder</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Akıllı Sepet. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
