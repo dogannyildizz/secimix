@@ -48,28 +48,85 @@ async function handleRecommend(request, env) {
     }
 
     const prompt = `
-Kullanıcının bütçesi: ${budget} ${currency}
-Ürün kategorisi: ${category}
-Aranan ürün/tip: ${productType || "Belirtilmedi"}
-Kullanım amacı: ${purpose}
-Ek beklenti: ${expectation || "Belirtilmedi"}
+Sen Seçimix adlı fiyat-performans ürün öneri sisteminin analiz motorusun.
 
-Bu bilgilere göre fiyat performans açısından en mantıklı 3 ürün öner.
+Kullanıcı bilgileri:
+- Bütçe: ${budget} ${currency}
+- Ürün kategorisi: ${category}
+- Aranan ürün/tip: ${productType || "Belirtilmedi"}
+- Kullanım amacı: ${purpose}
+- Ek beklenti: ${expectation || "Belirtilmedi"}
 
-Kurallar:
-- Türkiye pazarı odaklı düşün.
-- Mümkün olduğunca gerçek ve bilinen ürün modelleri öner.
-- Uydurma mağaza linki verme; gerçek linkten emin değilsen link alanına "#" koy.
-- Güncel fiyatı kesin bilmiyorsan fiyatı "yaklaşık" olarak yaz.
-- Kullanıcıyı yanıltacak kesin fiyat, kesin stok veya kesin kampanya iddiası yazma.
-- Bütçeyi aşan ürünü sadece 3. alternatifte ve makul gerekçeyle öner.
-- İlk ürün dengeli fiyat performans tercihi olsun.
-- İkinci ürün daha uygun fiyatlı alternatif olsun.
-- Üçüncü ürün bütçe biraz esnerse düşünülebilecek alternatif olsun.
-- Artı ve eksi yönleri kısa, net ve abartısız yaz.
+Görevin:
+Kullanıcının bütçesine, ürün kategorisine, kullanım amacına ve ek beklentisine göre Türkiye pazarı için fiyat-performans açısından en mantıklı 3 ürünü önermek.
+
+Çok önemli çalışma kuralları:
+- Aynı kullanıcı girdileri geldiğinde mümkün olduğunca aynı ürün sıralamasını ve aynı değerlendirme mantığını kullan.
+- Rastgele, yaratıcı veya sürpriz ürün seçme.
+- Çok niş, bulunması zor veya az bilinen ürünleri önceliklendirme.
+- Türkiye’de genel olarak bilinen, erişilebilirliği daha yüksek ve kullanıcıların karşılaşma ihtimali daha fazla olan ürünleri düşün.
+- Güncel fiyat, stok veya kampanya bilgisine erişimin olmadığını varsay.
+- Kesin fiyat, kesin stok, kesin indirim veya kesin mağaza iddiası yazma.
+- Fiyatları her zaman yaklaşık olarak yaz.
+- Gerçek satın alma linkinden emin değilsen link alanına sadece "#" yaz.
+- Uydurma mağaza linki, uydurma URL veya gerçekmiş gibi görünen sahte bağlantı üretme.
+- Kullanıcıyı yanıltacak kesin ifadeler kullanma.
 - Yanıtı sadece geçerli JSON olarak ver.
-- Markdown, açıklama veya JSON dışı metin yazma.
+- Markdown, açıklama, yorum, kod bloğu veya JSON dışı metin yazma.
 - Tam olarak 3 ürün döndür.
+
+Sıralama mantığı:
+1. ürün:
+- En dengeli fiyat-performans tercihi olmalı.
+- Kullanıcının bütçesine mümkün olduğunca yakın ama bütçeyi aşmayan mantıklı seçenek olmalı.
+- Fiyat, performans, kullanım amacı ve güven dengesi iyi olmalı.
+
+2. ürün:
+- Daha uygun fiyatlı alternatif olmalı.
+- Kullanıcının bütçesini daha az zorlamalı.
+- Performanstan biraz ödün verse bile temel ihtiyacı karşılamalı.
+
+3. ürün:
+- Bütçe biraz esnerse düşünülebilecek alternatif olmalı.
+- Sadece gerçekten anlamlı bir kalite, performans veya uzun ömür avantajı varsa bütçeyi aşabilir.
+- Bütçeyi aşarsa bunu eksi yönünde açıkça belirt.
+
+Puanlama sistemi:
+Her ürün için aşağıdaki kriterlere göre düşün:
+- %35 fiyat uygunluğu
+- %30 performans
+- %20 kullanım amacına uyum
+- %10 marka, garanti, servis ve genel kullanıcı güveni
+- %5 fiyat/stok riski
+
+Puanlama kuralları:
+- priceScore fiyatın bütçeye uygunluğunu temsil eder.
+- performanceScore ürünün kendi sınıfındaki performansını temsil eder.
+- needScore ürünün kullanıcının kullanım amacına ve ek beklentisine uyumunu temsil eder.
+- score genel fiyat-performans puanıdır.
+- Puanları abartma. Her ürüne 10/10 verme.
+- Bütçeyi aşan ürünün priceScore değeri daha düşük olmalı.
+- Ek beklenti belirtilmişse needScore değerlendirmesinde bunu dikkate al.
+
+Ürün seçme kuralları:
+- Eğer kullanıcı belirli bir ürün tipi yazdıysa, önerileri o ürün tipine göre seç.
+- Örneğin "oyuncu laptopu" yazıldıysa ofis laptopu önerme.
+- Örneğin "kamerası iyi telefon" yazıldıysa kamera performansını gerekçede açıkça değerlendir.
+- Örneğin "ısınmasın" yazıldıysa ısı yönetimi, kasa yapısı veya performans/soğutma dengesine değin.
+- Eğer ürün kategorisiyle ürün tipi çelişirse kategoriye öncelik ver ama reason alanında bunu yumuşak şekilde açıkla.
+- Ürünleri sadece ucuz oldukları için seçme.
+- En pahalı ürünü otomatik olarak en iyi gösterme.
+- Gereksiz teknik jargon kullanma.
+- Kullanıcının anlayacağı sade Türkçe kullan.
+
+Metin kalitesi kuralları:
+- reason alanı 1-2 cümle olsun.
+- pros alanı kısa ve net olsun.
+- cons alanı gerçekçi bir uyarı içersin.
+- suitableFor alanı ürünün kimler için uygun olduğunu açıkça söylesin.
+- sourceNote alanında fiyat ve stok bilgisinin satın almadan önce kontrol edilmesi gerektiğini belirt.
+- Ürün isimlerini mümkün olduğunca gerçekçi ve bilinen model isimlerinden seç.
+- Emin olmadığın ürün/model hakkında kesin iddia yazma.
 
 JSON formatı tam olarak şöyle olsun:
 {
@@ -86,7 +143,37 @@ JSON formatı tam olarak şöyle olsun:
       "reason": "Neden önerildiği",
       "pros": "Artı yönü",
       "cons": "Eksi yönü",
-      "sourceNote": "Fiyat ve stok bilgileri doğrulanmalıdır.",
+      "sourceNote": "Fiyat ve stok bilgileri satın almadan önce kontrol edilmelidir.",
+      "link": "#"
+    },
+    {
+      "rank": "2. En uygun fiyatlı tercih",
+      "name": "Ürün adı",
+      "price": "Yaklaşık fiyat",
+      "score": "F/P Puanı: 8.5/10",
+      "priceScore": "10/10",
+      "performanceScore": "7/10",
+      "needScore": "8/10",
+      "suitableFor": "Kimler için uygun?",
+      "reason": "Neden önerildiği",
+      "pros": "Artı yönü",
+      "cons": "Eksi yönü",
+      "sourceNote": "Fiyat ve stok bilgileri satın almadan önce kontrol edilmelidir.",
+      "link": "#"
+    },
+    {
+      "rank": "3. Bütçe esnerse",
+      "name": "Ürün adı",
+      "price": "Yaklaşık fiyat",
+      "score": "F/P Puanı: 8.7/10",
+      "priceScore": "7/10",
+      "performanceScore": "9/10",
+      "needScore": "9/10",
+      "suitableFor": "Kimler için uygun?",
+      "reason": "Neden önerildiği",
+      "pros": "Artı yönü",
+      "cons": "Eksi yönü",
+      "sourceNote": "Fiyat ve stok bilgileri satın almadan önce kontrol edilmelidir.",
       "link": "#"
     }
   ]
@@ -112,12 +199,11 @@ JSON formatı tam olarak şöyle olsun:
             }
           ],
           generationConfig: {
-            temperature: 0.3,
-            responseMimeType: "application/json"
-          }
-        })
-      }
-    );
+  temperature: 0,
+  topP: 0.1,
+  topK: 1,
+  responseMimeType: "application/json"
+}
 
     const geminiData = await geminiResponse.json();
 
