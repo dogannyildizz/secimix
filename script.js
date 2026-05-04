@@ -22,6 +22,7 @@ const expectationExamples = {
 
 function updateExpectationPlaceholder() {
   const selectedCategory = categorySelect.value;
+
   expectationInput.placeholder =
     expectationExamples[selectedCategory] ||
     "Örn: fiyat performans açısından mantıklı olsun";
@@ -89,7 +90,7 @@ form.addEventListener("submit", async function(event) {
 
   searchSummary.classList.remove("hidden");
 
-  statusMessage.textContent = "Backend üzerinden öneriler hazırlanıyor...";
+  statusMessage.textContent = "Backend üzerinden OpenAI ile öneriler hazırlanıyor...";
   statusMessage.classList.remove("hidden");
   statusMessage.classList.remove("error");
   results.classList.add("hidden");
@@ -122,8 +123,7 @@ form.addEventListener("submit", async function(event) {
     statusMessage.classList.add("hidden");
     results.classList.remove("hidden");
   } catch (error) {
-    statusMessage.textContent =
-      "Backend bağlantısı kurulamadı. Siteyi Netlify Functions ile yeniden deploy ettiğinden emin ol.";
+    statusMessage.textContent = "Hata: " + error.message;
     statusMessage.classList.remove("hidden");
     statusMessage.classList.add("error");
     results.classList.add("hidden");
