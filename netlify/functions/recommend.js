@@ -8,14 +8,14 @@ exports.handler = async function(event) {
   }
 
   try {
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "OPENROUTER_API_KEY tanımlı değil. Netlify Environment Variables alanını kontrol et."
+          error: "GEMINI_API_KEY tanımlı değil. Netlify Environment Variables alanını kontrol et."
         })
       };
     }
@@ -37,7 +37,7 @@ exports.handler = async function(event) {
       };
     }
 
-    const userPrompt = `
+    const prompt = `
 Kullanıcının bütçesi: ${budget} ${currency}
 Ürün kategorisi: ${category}
 Aranan ürün/tip: ${productType || "Belirtilmedi"}
@@ -46,13 +46,13 @@ Ek beklenti: ${expectation || "Belirtilmedi"}
 
 Bu bilgilere göre fiyat performans açısından en mantıklı 3 ürün öner.
 
-Önemli kurallar:
+Kurallar:
 - Türkiye pazarı odaklı düşün.
-- Güncel fiyatı kesin bilmiyorsan "yaklaşık" olduğunu belirt.
+- Güncel fiyatı kesin bilmiyorsan yaklaşık olduğunu belirt.
 - Gerçek satın alma linki bilmiyorsan link alanına "#" koy.
 - Kullanıcıyı yanıltacak kesin fiyat veya stok iddiası yazma.
 - Yanıtı sadece geçerli JSON olarak ver.
-- JSON dışında açıklama, markdown veya ek metin yazma.
+- Markdown, açıklama veya JSON dışı metin yazma.
 - Tam olarak 3 ürün döndür.
 
 JSON formatı tam olarak şöyle olsun:
@@ -77,56 +77,55 @@ JSON formatı tam olarak şöyle olsun:
 }
 `;
 
-    const routerResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://secimix.netlify.app",
-        "X-Title": "Secimix"
-      },
-      body: JSON.stringify({
-        model: "qwen/qwen3-4b:free",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Sen fiyat performans odaklı ürün önerileri hazırlayan dikkatli bir ürün analiz asistanısın. Kullanıcıyı yanıltma. Emin olmadığın fiyat, stok ve link bilgilerini kesinmiş gibi yazma. Yanıtı yalnızca geçerli JSON olarak ver."
-          },
-          {
-            role: "user",
-            content: userPrompt
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.3,
+            responseMimeType: "application/json"
           }
-        ],
-        temperature: 0.3
-      })
-    });
+        })
+      }
+    );
 
-    const routerData = await routerResponse.json();
+    const geminiData = await geminiResponse.json();
 
-    if (!routerResponse.ok) {
+    if (!geminiResponse.ok) {
       return {
-        statusCode: routerResponse.status,
+        statusCode: geminiResponse.status,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error:
-            routerData.error?.message ||
-            routerData.message ||
-            "OpenRouter API isteği başarısız oldu."
+            geminiData.error?.message ||
+            "Gemini API isteği başarısız oldu."
         })
       };
     }
 
     const outputText =
-      routerData.choices?.[0]?.message?.content ||
-      "";
+      geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     if (!outputText) {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "OpenRouter boş yanıt döndürdü."
+          error: "Gemini boş yanıt döndürdü."
         })
       };
     }
@@ -135,7 +134,7 @@ JSON formatı tam olarak şöyle olsun:
 
     try {
       parsed = JSON.parse(outputText);
-    } catch (firstParseError) {
+    } catch (parseError) {
       const jsonMatch = outputText.match(/\{[\s\S]*\}/);
 
       if (!jsonMatch) {
@@ -143,24 +142,13 @@ JSON formatı tam olarak şöyle olsun:
           statusCode: 500,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            error: "OpenRouter yanıtı JSON olarak okunamadı.",
+            error: "Gemini yanıtı JSON olarak okunamadı.",
             raw: outputText
           })
         };
       }
 
-      try {
-        parsed = JSON.parse(jsonMatch[0]);
-      } catch (secondParseError) {
-        return {
-          statusCode: 500,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            error: "OpenRouter yanıtından JSON ayıklanamadı.",
-            raw: outputText
-          })
-        };
-      }
+      parsed = JSON.parse(jsonMatch[0]);
     }
 
     if (!parsed.products || !Array.isArray(parsed.products)) {
@@ -168,7 +156,7 @@ JSON formatı tam olarak şöyle olsun:
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "Yanıtta products listesi bulunamadı."
+          error: "Gemini yanıtında products listesi bulunamadı."
         })
       };
     }
