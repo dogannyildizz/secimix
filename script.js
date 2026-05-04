@@ -100,7 +100,7 @@ form.addEventListener("submit", async function(event) {
   results.innerHTML = "";
 
   try {
-    const response = await fetch("/.netlify/functions/recommend", {
+    const response = await fetch("/recommend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
