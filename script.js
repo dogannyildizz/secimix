@@ -1,4 +1,5 @@
 const form = document.getElementById("productForm");
+const submitButton = form.querySelector("button[type='submit']");
 const results = document.getElementById("results");
 const statusMessage = document.getElementById("statusMessage");
 const searchSummary = document.getElementById("searchSummary");
@@ -90,7 +91,9 @@ form.addEventListener("submit", async function(event) {
 
   searchSummary.classList.remove("hidden");
 
-  statusMessage.textContent = "Backend üzerinden OpenAI ile öneriler hazırlanıyor...";
+  statusMessage.textContent = "Sizin için en mantıklı öneriler hazırlanıyor...";
+  submitButton.disabled = true;
+  submitButton.textContent = "Hazırlanıyor...";
   statusMessage.classList.remove("hidden");
   statusMessage.classList.remove("error");
   results.classList.add("hidden");
@@ -122,12 +125,20 @@ form.addEventListener("submit", async function(event) {
 
     statusMessage.classList.add("hidden");
     results.classList.remove("hidden");
+    statusMessage.classList.add("hidden");
+    results.classList.remove("hidden");
+    
+    submitButton.disabled = false;
+    submitButton.textContent = "Önerileri Göster";
   } catch (error) {
   statusMessage.textContent =
     "Şu anda öneriler hazırlanamadı. Lütfen birkaç dakika sonra tekrar deneyin.";
   statusMessage.classList.remove("hidden");
   statusMessage.classList.add("error");
   results.classList.add("hidden");
+
+  submitButton.disabled = false;
+  submitButton.textContent = "Önerileri Göster";
 
   console.error("Backend hatası:", error);
 }
