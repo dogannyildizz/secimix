@@ -90,63 +90,45 @@
 
         <div class="finder">
           <form id="productForm">
-            <div>
-              <label for="budget">Bütçe</label>
-              <input id="budget" type="number" placeholder="Örn: 25000" required />
-            </div>
+  <div>
+    <label for="budget">Bütçe</label>
+    <input id="budget" type="number" placeholder="Örn: 25000" required />
+  </div>
 
-            <div>
-              <label for="currency">Para birimi</label>
-              <select id="currency">
-                <option value="TL">TL</option>
-              </select>
-            </div>
+  <div>
+    <label for="category">Kategori</label>
+    <select id="category">
+      <option value="Laptop">Laptop</option>
+      <option value="Telefon">Telefon</option>
+      <option value="Kulaklık">Kulaklık</option>
+      <option value="Monitör">Monitör</option>
+      <option value="Tablet">Tablet</option>
+      <option value="Televizyon">Televizyon</option>
+      <option value="Akıllı Saat">Akıllı Saat</option>
+      <option value="Oyun Konsolu">Oyun Konsolu</option>
+      <option value="Klavye">Klavye</option>
+      <option value="Mouse">Mouse</option>
+    </select>
+  </div>
 
-            <div>
-              <label for="category">Kategori</label>
-              <select id="category">
-                <option value="Laptop">Laptop</option>
-                <option value="Telefon">Telefon</option>
-                <option value="Kulaklık">Kulaklık</option>
-                <option value="Monitör">Monitör</option>
-                <option value="Tablet">Tablet</option>
-                <option value="Televizyon">Televizyon</option>
-                <option value="Akıllı Saat">Akıllı Saat</option>
-                <option value="Oyun Konsolu">Oyun Konsolu</option>
-                <option value="Klavye">Klavye</option>
-                <option value="Mouse">Mouse</option>
-              </select>
-            </div>
+  <div>
+    <label for="purpose">Kullanım amacı</label>
+    <select id="purpose">
+      <option value="Günlük kullanım">Günlük kullanım</option>
+      <option value="Oyun">Oyun</option>
+      <option value="İş">İş</option>
+      <option value="Öğrenci">Öğrenci</option>
+      <option value="Profesyonel kullanım">Profesyonel kullanım</option>
+      <option value="Taşınabilirlik">Taşınabilirlik</option>
+    </select>
+  </div>
 
-            <div>
-              <label for="productType">Aradığın ürün</label>
-              <input id="productType" type="text" placeholder="Örn: oyuncu laptopu" />
-            </div>
-
-            <div>
-              <label for="purpose">Kullanım amacı</label>
-              <select id="purpose">
-                <option value="Günlük kullanım">Günlük kullanım</option>
-                <option value="Oyun">Oyun</option>
-                <option value="İş">İş</option>
-                <option value="Öğrenci">Öğrenci</option>
-                <option value="Profesyonel kullanım">Profesyonel kullanım</option>
-                <option value="Taşınabilirlik">Taşınabilirlik</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="expectation">Ek beklenti</label>
-              <input id="expectation" type="text" placeholder="Örn: hafif olsun" />
-            </div>
-
-            <button class="btn btn-primary" type="submit">Önerileri Göster</button>
-          </form>
+  <button class="btn btn-primary" type="submit">Önerileri Göster</button>
+</form>
 
           <div class="form-tip">
-            İpucu: Daha iyi sonuç için “şarjı uzun gitsin”, “oyun için güçlü olsun”,
-            “hafif olsun” veya “kamerası iyi olsun” gibi kısa bir beklenti yazabilirsin.
-          </div>
+  İpucu: Daha iyi sonuç için bütçeni doğru girip kategori ve kullanım amacını seçmen yeterlidir.
+</div>
 
           <div id="statusMessage" class="status-message hidden"></div>
 
