@@ -86,7 +86,7 @@ JSON formatı tam olarak şöyle olsun:
         "X-Title": "Secimix"
       },
       body: JSON.stringify({
-        model: "openrouter/free",
+        model: "deepseek/deepseek-chat-v3-0324:free",
         messages: [
           {
             role: "system",
